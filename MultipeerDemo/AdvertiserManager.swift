@@ -21,6 +21,14 @@ struct Item : Codable, Identifiable {
     let id : UUID
 }
 
+struct PeerAction {
+    enum Action {
+        case remove
+        case add
+    }
+    let action: Action
+    let peerID : Int
+}
 class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserDelegate,  MCNearbyServiceBrowserDelegate, MCSessionDelegate {
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
         print("session \(session.myPeerID) with \(peerID) chaged state to \(state)")
@@ -33,14 +41,17 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
             return
         }
         
+        let peerAction : PeerAction
         switch state {
         case .connected:
-            self.peers.formUnion([peerIDInt])
+            peerAction = .init(action : .add, peerID : peerIDInt)
         case .notConnected:
-            self.peers.remove(peerIDInt)
+            peerAction = .init(action: .remove, peerID : peerIDInt)
         default:
-            break
+            return
         }
+        
+        self.peerActionSubject.send(peerAction)
     }
     
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -48,14 +59,7 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
         guard let item = try? jsonDecoder.decode(Item.self, from: data) else {
             return
         }
-        self.items.insert(item, at: 0)
-        
-        let countToRemove = self.items.count - 5
-        
-        guard countToRemove > 0 else {
-            return
-        }
-        self.items.removeLast(countToRemove)
+        self.itemsSubject.send(item)
     }
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
@@ -80,6 +84,9 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
     let jsonEncoder = JSONEncoder()
     let jsonDecoder = JSONDecoder()
     
+    let peerActionSubject = PassthroughSubject<PeerAction, Never>()
+    let itemsSubject = PassthroughSubject<Item, Never>()
+    
     @Published var peers = Set<Int>()
     @Published var items = [Item]()
     
@@ -87,7 +94,7 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
         return .init(peers)
     }
     
-    var timerCancellable : AnyCancellable?
+    var cancellables = [AnyCancellable]()
     
     var peerID : MCPeerID {
         MCPeerID(displayName: "peer \(id)")
@@ -104,12 +111,30 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
         browser.delegate = self
         session.delegate = self
         
+        peerActionSubject.receive(on: DispatchQueue.main).sink { action in
+            switch action.action {
+            case .add:
+                self.peers.formUnion([action.peerID])
+            case .remove:
+                self.peers.remove(action.peerID)
+            }
+        }.store(in: &self.cancellables)
         
+        itemsSubject.receive(on: DispatchQueue.main).sink { item in
+            
+            self.items.insert(item, at: 0)
+            
+            let countToRemove = self.items.count - 5
+            
+            guard countToRemove > 0 else {
+                return
+            }
+            self.items.removeLast(countToRemove)
+        }.store(in: &self.cancellables)
             
     }
     
     func start () {
-        self.timerCancellable =
         Timer.publish(every: 1.0, on: .current, in: .common).autoconnect()
         .map {
             Item(sourceID: self.id, date: $0)
@@ -123,10 +148,11 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
           }
             do {
                 try self.session.send(data, toPeers: self.session.connectedPeers, with: .reliable)
+                print("Sent data.")
             } catch {
                 dump(error)
             }
-        }
+        }.store(in: &self.cancellables)
         
         self.browser.startBrowsingForPeers()
         self.advertiser.startAdvertisingPeer()
