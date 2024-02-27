@@ -11,6 +11,7 @@
 		B30968FD2B8E23AF003B4BCE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30968FC2B8E23AF003B4BCE /* ContentView.swift */; };
 		B30968FF2B8E23B0003B4BCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B30968FE2B8E23B0003B4BCE /* Assets.xcassets */; };
 		B30969022B8E23B0003B4BCE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B30969012B8E23B0003B4BCE /* Preview Assets.xcassets */; };
+		B309690A2B8E251C003B4BCE /* AdvertiserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30969092B8E251C003B4BCE /* AdvertiserManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,8 @@
 		B30968FE2B8E23B0003B4BCE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B30969012B8E23B0003B4BCE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B30969032B8E23B0003B4BCE /* MultipeerDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MultipeerDemo.entitlements; sourceTree = "<group>"; };
+		B30969092B8E251C003B4BCE /* AdvertiserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertiserManager.swift; sourceTree = "<group>"; };
+		B309690B2B8E2C1A003B4BCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,11 +55,13 @@
 		B30968F92B8E23AF003B4BCE /* MultipeerDemo */ = {
 			isa = PBXGroup;
 			children = (
+				B309690B2B8E2C1A003B4BCE /* Info.plist */,
 				B30968FA2B8E23AF003B4BCE /* MultipeerDemoApp.swift */,
 				B30968FC2B8E23AF003B4BCE /* ContentView.swift */,
 				B30968FE2B8E23B0003B4BCE /* Assets.xcassets */,
 				B30969032B8E23B0003B4BCE /* MultipeerDemo.entitlements */,
 				B30969002B8E23B0003B4BCE /* Preview Content */,
+				B30969092B8E251C003B4BCE /* AdvertiserManager.swift */,
 			);
 			path = MultipeerDemo;
 			sourceTree = "<group>";
@@ -139,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B309690A2B8E251C003B4BCE /* AdvertiserManager.swift in Sources */,
 				B30968FD2B8E23AF003B4BCE /* ContentView.swift in Sources */,
 				B30968FB2B8E23AF003B4BCE /* MultipeerDemoApp.swift in Sources */,
 			);
@@ -272,7 +278,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MultipeerDemo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MultipeerDemo/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "I need it for this demo";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -297,7 +305,9 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MultipeerDemo/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MultipeerDemo/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "I need it for this demo";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

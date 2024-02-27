@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var object = AdvertiserManager()
     var body: some View {
-        Text("Hello, world!")
+        VStack{
+            Button("Start") {
+                self.object.start()
+            }
+            Button("Stop") {
+                self.object.stop()
+            }
+        }
             .padding()
     }
 }
