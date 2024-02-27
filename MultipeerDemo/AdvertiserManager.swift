@@ -110,12 +110,17 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
     
     func start () {
         self.timerCancellable =
-        Timer.publish(every: 1.0, on: .current, in: .common).map {
+        Timer.publish(every: 1.0, on: .current, in: .common).autoconnect()
+        .map {
             Item(sourceID: self.id, date: $0)
         }
+        
         .encode(encoder: jsonEncoder)
         .assertNoFailure()
         .sink { data in
+          guard !self.session.connectedPeers.isEmpty else {
+            return
+          }
             do {
                 try self.session.send(data, toPeers: self.session.connectedPeers, with: .reliable)
             } catch {
