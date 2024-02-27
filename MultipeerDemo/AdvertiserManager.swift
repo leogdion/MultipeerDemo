@@ -161,5 +161,10 @@ class AdvertiserManager : NSObject, ObservableObject, MCNearbyServiceAdvertiserD
     
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
         print("Browser \(browser.serviceType) found \(peerID.displayName)")
+      session.nearbyConnectionData(forPeer: peerID) { data, error in
+        if let error = error {
+          print(error)
+        }
+      }
     }
 }
