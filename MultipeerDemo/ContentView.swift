@@ -11,14 +11,12 @@ struct ContentView: View {
     @StateObject var object = AdvertiserManager()
     var body: some View {
         VStack{
-            Button("Start") {
-                self.object.start()
-            }
-            Button("Stop") {
-                self.object.stop()
-            }
+            Text(object.id.description)
         }
             .padding()
+            .onAppear {
+                self.object.start()
+            }
     }
 }
 
